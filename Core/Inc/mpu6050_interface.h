@@ -8,8 +8,8 @@
 #ifndef INC_MPU6050_INTERFACE_H_
 #define INC_MPU6050_INTERFACE_H_
 
-typedef void (*mpu_write_fun_t)(uint8_t regAddress, uint8_t value, uint16_t deviceAddress );
-typedef void (*mpu_read_fun_t)(uint8_t regAddress,uint16_t size ,uint8_t *destination, uint16_t deviceAddress);
+typedef void (*mpu_write_fun_t)(uint16_t deviceAddress , uint8_t regAddress, uint8_t *value);
+typedef void (*mpu_read_fun_t)(uint16_t deviceAddress, uint8_t regAddress,uint8_t *destination, uint16_t size);
 
 
 typedef struct{

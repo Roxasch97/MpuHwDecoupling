@@ -45,7 +45,12 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint8_t whoami = 0;
+uint16_t x_raw = 0;
+uint16_t y_raw = 0;
+uint16_t z_raw = 0;
+uint16_t x_conv = 0;
+uint16_t y_conv = 0;
+uint16_t z_cpmv = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,8 +59,8 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-void mpu1_write(uint8_t regAddress, uint8_t value, uint16_t deviceAddress);
-void mpu1_read(uint8_t regAddress,uint16_t size ,uint8_t* destination, uint16_t deviceAddress);
+void mpu_write(uint16_t deviceAddress, uint8_t regAddress, uint8_t *value);
+void mpu_read(uint16_t deviceAddress, uint8_t regAddress, uint8_t* destination,uint16_t size);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -80,14 +85,21 @@ int main(void)
   /* USER CODE BEGIN Init */
   MpuType mpu1;
 
-  static mpu_interface mpu1_interface=
+  static mpu_interface mpu1_interface =
   {
-  		mpu1_write,
-  		mpu1_read,
+  		mpu_write,
+  		mpu_read,
   };
 
   mpu1.interface = mpu1_interface;
   mpu1.address = MPU6050_ADDRESS_2;
+  mpu1.PWR_MGMT_1 = 0x0;
+  mpu1.SMPRT_DIV = 0x0;
+  mpu1.ACCEL_CONFIG = 0x18;
+  mpu1.GYRO_CONFIG = 0x00;
+  mpu1.INT_ENABLE = 0x0;
+
+  MpuInitialize(&mpu1);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -110,7 +122,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  whoami = MpuWhoAmI(&mpu1);
+	  x_raw = MpuReadAccelXRaw(&mpu1);
 	  HAL_Delay(1000);
     /* USER CODE END WHILE */
 
@@ -278,14 +290,14 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void mpu1_write(uint8_t regAddress, uint8_t value, uint16_t deviceAddress)
+void mpu_write(uint16_t deviceAddress, uint8_t regAddress, uint8_t *value)
 {
-
+	HAL_I2C_Mem_Write(&hi2c1, deviceAddress, regAddress, 1, value, 1, 1000);
 }
 
-void mpu1_read(uint8_t regAddress,uint16_t size ,uint8_t* destination, uint16_t deviceAddress)
+void mpu_read(uint16_t deviceAddress, uint8_t regAddress, uint8_t* destination,uint16_t size)
 {
-HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDRESS_1, MPU6050_REG_WHO_AM_I, 1, destination, size, 1000);
+	HAL_I2C_Mem_Read(&hi2c1, deviceAddress, regAddress, 1, destination, size, 1000);
 }
 
 

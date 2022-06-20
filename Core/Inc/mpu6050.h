@@ -27,6 +27,7 @@
 #define MPU6050_REG_GYRO_YOFFS_L      (0x16)
 #define MPU6050_REG_GYRO_ZOFFS_H      (0x17)
 #define MPU6050_REG_GYRO_ZOFFS_L      (0x18)
+#define MPU6050_REG_SMPLRT_DIV		  (0x19)
 #define MPU6050_REG_CONFIG            (0x1A)
 #define MPU6050_REG_GYRO_CONFIG       (0x1B)
 #define MPU6050_REG_ACCEL_CONFIG      (0x1C)
@@ -59,16 +60,26 @@
 #define MPU6050_REG_PWR_MGMT_1        (0x6B)
 #define MPU6050_REG_WHO_AM_I          (0x75)
 
-typedef enum {
-	mpuok = 0
-} MpuStatus;
+#define LSB_Sensitivity 16384
+#define RESET_VALUE 1U<<7
 
 typedef struct
 {
 	mpu_interface interface;
 	uint8_t address;
+
+	/*Basic registers values*/
+	uint8_t PWR_MGMT_1;
+	uint8_t SMPRT_DIV;
+	uint8_t ACCEL_CONFIG;
+	uint8_t GYRO_CONFIG;
+	uint8_t INT_ENABLE;
+	uint8_t FullScaleRange;
 } MpuType;
 
 uint8_t MpuWhoAmI(MpuType *MpuAccel);
+
+void MpuInitialize(MpuType *mpu);
+int16_t MpuReadAccelXRaw (MpuType *mpu);
 
 #endif /* INC_MPU6050_H_ */
