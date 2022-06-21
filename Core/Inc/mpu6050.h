@@ -10,6 +10,7 @@
 
 #include "main.h"
 #include "mpu6050_interface.h"
+#include "mpu6050_constants.h"
 
 #define MPU6050_ADDRESS_1             (0xD0)
 #define MPU6050_ADDRESS_2             (0xD2)
@@ -62,13 +63,6 @@
 
 #define LSB_Sensitivity 16384
 #define RESET_VALUE 1U<<7
-
-typedef enum{
-	mpuReadError = -3,
-	mpuWriteError = -2,
-	mpuInitError = -1,
-	mpuOk = 0
-}MpuStatus;
 
 typedef struct
 {
