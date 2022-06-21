@@ -63,6 +63,16 @@
 #define LSB_Sensitivity 16384
 #define RESET_VALUE 1U<<7
 
+enum MpuStatusEnum
+{
+	mpuReadError = -3,
+	mpuWriteError = -2,
+	mpuInitError = -1,
+	mpuOk = 0
+};
+
+typedef enum MpuStatusEnum MpuStatus;
+
 typedef struct
 {
 	mpu_interface interface;

@@ -16,7 +16,7 @@ void MpuWrite(MpuType *mpu , uint8_t regAddress, uint8_t value)
 
 void MpuRead(MpuType *mpu ,uint8_t regAddress, uint16_t size, uint8_t *destination)
 {
-	mpu->interface.MpuReadCallback(regAddress, size, destination, mpu->address);
+	mpu->interface.MpuReadCallback(mpu->address, regAddress, destination, size);
 }
 
 uint8_t MpuWhoAmI(MpuType *mpu)
@@ -97,7 +97,7 @@ int16_t MpuReadAccelXRaw (MpuType *mpu)
 int16_t MpuReadAccelYRaw (MpuType *mpu)
 {
 	uint8_t data[2];
-	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_YOUT_H, 2, &data[0]);
+	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_YOUT_H, 2, data[0]);
 
 	return (int16_t)(data[0]<<8 | data[1]);
 }
@@ -105,7 +105,7 @@ int16_t MpuReadAccelYRaw (MpuType *mpu)
 int16_t MpuReadAccelZRaw (MpuType *mpu)
 {
 	uint8_t data[2];
-	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_ZOUT_H, 2, &data[0]);
+	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_ZOUT_H, 2, data[0]);
 
 	return (int16_t)(data[0]<<8 | data[1]);
 }

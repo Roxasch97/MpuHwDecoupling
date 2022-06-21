@@ -45,12 +45,13 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint16_t x_raw = 0;
+uint16_t x_raw[2];
 uint16_t y_raw = 0;
 uint16_t z_raw = 0;
 uint16_t x_conv = 0;
 uint16_t y_conv = 0;
 uint16_t z_cpmv = 0;
+uint8_t whoami = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,8 +60,8 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-void mpu_write(uint16_t deviceAddress, uint8_t regAddress, uint8_t *value);
-void mpu_read(uint16_t deviceAddress, uint8_t regAddress, uint8_t* destination,uint16_t size);
+MpuStatus mpu_write(uint16_t deviceAddress, uint8_t regAddress, uint8_t *value);
+MpuStatus mpu_read(uint16_t deviceAddress, uint8_t regAddress, uint8_t* destination,uint16_t size);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -122,8 +123,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  x_raw = MpuReadAccelXRaw(&mpu1);
-	  HAL_Delay(1000);
+	 HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDRESS_2, MPU6050_REG_ACCEL_XOUT_H, 1, &x_raw, 2, 1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -290,14 +290,32 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void mpu_write(uint16_t deviceAddress, uint8_t regAddress, uint8_t *value)
+MpuStatus mpu_write(uint16_t deviceAddress, uint8_t regAddress, uint8_t *value)
 {
-	HAL_I2C_Mem_Write(&hi2c1, deviceAddress, regAddress, 1, value, 1, 1000);
+	HAL_StatusTypeDef status = HAL_OK;
+	status = HAL_I2C_Mem_Write(&hi2c1, deviceAddress, regAddress, 1, value, 1, 1000);
+	if (status == HAL_OK)
+	{
+		return mpuOk;
+	}
+	else
+	{
+		return mpuWriteError;
+	}
 }
 
-void mpu_read(uint16_t deviceAddress, uint8_t regAddress, uint8_t* destination,uint16_t size)
+MpuStatus mpu_read(uint16_t deviceAddress, uint8_t regAddress, uint8_t* destination,uint16_t size)
 {
-	HAL_I2C_Mem_Read(&hi2c1, deviceAddress, regAddress, 1, destination, size, 1000);
+	HAL_StatusTypeDef status = HAL_OK;
+	status = HAL_I2C_Mem_Read(&hi2c1, deviceAddress, regAddress, 1, destination, size, 1000);
+	if (status == HAL_OK)
+	{
+		return mpuOk;
+	}
+	else
+	{
+		return mpuWriteError;
+	}
 }
 
 

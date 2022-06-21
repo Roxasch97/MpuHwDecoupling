@@ -8,8 +8,8 @@
 #ifndef INC_MPU6050_INTERFACE_H_
 #define INC_MPU6050_INTERFACE_H_
 
-typedef void (*mpu_write_fun_t)(uint16_t deviceAddress , uint8_t regAddress, uint8_t *value);
-typedef void (*mpu_read_fun_t)(uint16_t deviceAddress, uint8_t regAddress,uint8_t *destination, uint16_t size);
+typedef MpuStatus  (*mpu_write_fun_t)(uint16_t deviceAddress , uint8_t regAddress, uint8_t *value);
+typedef enum MpuStatusEnum (*mpu_read_fun_t)(uint16_t deviceAddress, uint8_t regAddress,uint8_t *destination, uint16_t size);
 
 
 typedef struct{
