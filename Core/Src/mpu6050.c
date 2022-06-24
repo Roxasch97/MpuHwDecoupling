@@ -11,12 +11,12 @@
 
 void MpuWrite(MpuType *mpu , uint8_t regAddress, uint8_t value)
 {
-	mpu->interface.MpuWriteCallback(mpu->address, regAddress, &value);
+	mpu->status = mpu->interface.MpuWriteCallback(mpu->address, regAddress, &value);
 }
 
 void MpuRead(MpuType *mpu ,uint8_t regAddress, uint16_t size, uint8_t *destination)
 {
-	mpu->interface.MpuReadCallback(mpu->address, regAddress, destination, size);
+	mpu->status = mpu->interface.MpuReadCallback(mpu->address, regAddress, destination, size);
 }
 
 uint8_t MpuWhoAmI(MpuType *mpu)
@@ -34,7 +34,7 @@ void MpuMemoryWrite(MpuType *mpu, uint8_t regAddress, uint8_t data){
 	}
 	else
 	{
-	/* Error handling to be done eventually */
+		mpu->status = mpuAbsentError;
 	}
 
 }
@@ -47,12 +47,10 @@ void MpuMemoryRead(MpuType *mpu ,uint8_t regAddress, uint16_t size, uint8_t *des
 	}
 	else
 	{
-	/* Error handling to be done eventually */
+		mpu->status = mpuAbsentError;
 	}
 
 }
-
-
 
 void MpuReset(MpuType *mpu)
 {
@@ -81,31 +79,30 @@ void MpuInitialize(MpuType *mpu)
 		}
 		else
 		{
-		/* Error handling to be done eventually */
+			mpu->status = mpuAbsentError;
 		}
-
 }
 
 int16_t MpuReadAccelXRaw (MpuType *mpu)
 {
-	uint8_t data[2];
-	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_XOUT_H, 2, &data[0]);
+	uint8_t data[2] = {0};
+	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_XOUT_H, 2, data);
 
 	return (int16_t)(data[0]<<8 | data[1]);
 }
 
 int16_t MpuReadAccelYRaw (MpuType *mpu)
 {
-	uint8_t data[2];
-	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_YOUT_H, 2, data[0]);
+	uint8_t data[2] = {0};
+	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_YOUT_H, 2, data);
 
 	return (int16_t)(data[0]<<8 | data[1]);
 }
 
 int16_t MpuReadAccelZRaw (MpuType *mpu)
 {
-	uint8_t data[2];
-	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_ZOUT_H, 2, data[0]);
+	uint8_t data[2] = {0};
+	MpuMemoryRead(mpu, MPU6050_REG_ACCEL_ZOUT_H, 2, data);
 
 	return (int16_t)(data[0]<<8 | data[1]);
 }

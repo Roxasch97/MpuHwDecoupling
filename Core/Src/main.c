@@ -45,7 +45,7 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-uint16_t x_raw[2];
+uint16_t x_raw = 0;
 uint16_t y_raw = 0;
 uint16_t z_raw = 0;
 uint16_t x_conv = 0;
@@ -123,7 +123,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	 HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDRESS_2, MPU6050_REG_ACCEL_XOUT_H, 1, &x_raw, 2, 1000);
+	x_raw = MpuReadAccelXRaw(&mpu1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -314,7 +314,7 @@ MpuStatus mpu_read(uint16_t deviceAddress, uint8_t regAddress, uint8_t* destinat
 	}
 	else
 	{
-		return mpuWriteError;
+		return mpuReadError;
 	}
 }
 
