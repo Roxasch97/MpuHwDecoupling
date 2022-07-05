@@ -100,7 +100,6 @@ int main(void)
   mpu1.GYRO_CONFIG = 0x00;
   mpu1.INT_ENABLE = 0x0;
 
-  MpuInitialize(&mpu1);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -115,7 +114,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
+  MpuInitialize(&mpu1);
       /*--[ Scanning Done ]--*/
   /* USER CODE END 2 */
 
@@ -123,7 +122,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	x_raw = MpuReadAccelXRaw(&mpu1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -318,7 +316,13 @@ MpuStatus mpu_read(uint16_t deviceAddress, uint8_t regAddress, uint8_t* destinat
 	}
 }
 
-
+void MpuHandleErrors(MpuType *mpu)
+{
+	if(mpu->status == mpuAbsentError)
+	{
+		HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
+	}
+}
 
 /* USER CODE END 4 */
 

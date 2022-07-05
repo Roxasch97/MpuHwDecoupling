@@ -35,6 +35,7 @@ void MpuMemoryWrite(MpuType *mpu, uint8_t regAddress, uint8_t data){
 	else
 	{
 		mpu->status = mpuAbsentError;
+		MpuHandleErrors(mpu);
 	}
 
 }
@@ -48,6 +49,7 @@ void MpuMemoryRead(MpuType *mpu ,uint8_t regAddress, uint16_t size, uint8_t *des
 	else
 	{
 		mpu->status = mpuAbsentError;
+		MpuHandleErrors(mpu);
 	}
 
 }
@@ -80,6 +82,7 @@ void MpuInitialize(MpuType *mpu)
 		else
 		{
 			mpu->status = mpuAbsentError;
+			MpuHandleErrors(mpu);
 		}
 }
 
@@ -115,8 +118,14 @@ float MpuConvertAccel(MpuType *mpu, int16_t rawAccel){
 	else
 	{
 	/* Error handling to be done eventually */
+	MpuHandleErrors(mpu);
 	return 0;
 	}
+}
+
+__weak void MpuHandleErrors(MpuType *mpu)
+{
+
 }
 
 

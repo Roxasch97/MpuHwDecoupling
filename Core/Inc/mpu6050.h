@@ -29,5 +29,6 @@ typedef struct
 
 void MpuInitialize(MpuType *mpu);
 int16_t MpuReadAccelXRaw (MpuType *mpu);
+void MpuHandleErrors(MpuType *mpu);
 
 #endif /* INC_MPU6050_H_ */
