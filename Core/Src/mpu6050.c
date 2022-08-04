@@ -117,13 +117,12 @@ float MpuConvertAccel(MpuType *mpu, int16_t rawAccel){
 	}
 	else
 	{
-	/* Error handling to be done eventually */
-	MpuHandleErrors(mpu);
+	mpu->status = mpuConvertError;
 	return 0;
 	}
 }
 
-__weak void MpuHandleErrors(MpuType *mpu)
+__attribute__((weak)) void MpuHandleErrors(MpuType *mpu)
 {
 
 }

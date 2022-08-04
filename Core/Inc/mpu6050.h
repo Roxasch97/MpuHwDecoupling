@@ -8,7 +8,8 @@
 #ifndef INC_MPU6050_H_
 #define INC_MPU6050_H_
 
-#include "main.h"
+#include <stdbool.h>
+#include <stdint.h>
 #include "mpu6050_interface.h"
 #include "mpu6050_constants.h"
 

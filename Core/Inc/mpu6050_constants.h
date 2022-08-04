@@ -9,6 +9,7 @@
 #define INC_MPU6050_CONSTANTS_H_
 
 typedef enum{
+	mpuConvertError = -4,
 	mpuAbsentError = -3,
 	mpuReadError = -2,
 	mpuWriteError = -1,
