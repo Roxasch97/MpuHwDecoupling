@@ -11,11 +11,17 @@
 #define UNUSED(x) (void)(x)
 
 MpuStatus MpuWrite(const MpuType *mpu, uint8_t regAddress, uint8_t value) {
+	if(mpu->interface.MpuWriteCallback == NULL){
+		return mpuNullptrError;
+	}
 	return mpu->interface.MpuWriteCallback(mpu->address, regAddress, &value);
 }
 
 MpuStatus MpuRead(const MpuType *mpu, uint8_t regAddress, uint16_t size,
 		uint8_t *destination) {
+	if(mpu->interface.MpuReadCallback == NULL){
+		return mpuNullptrError;
+	}
 	return mpu->interface.MpuReadCallback(mpu->address, regAddress, destination,
 			size);
 }
