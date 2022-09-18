@@ -62,7 +62,8 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-MpuStatus mpu_write(uint16_t deviceAddress, uint8_t regAddress, uint8_t *value);
+MpuStatus mpu_write(uint16_t deviceAddress, uint8_t regAddress,
+		const uint8_t *value);
 MpuStatus mpu_read(uint16_t deviceAddress, uint8_t regAddress,
 		uint8_t *destination, uint16_t size);
 /* USER CODE END PFP */
@@ -90,8 +91,7 @@ int main(void) {
 			.MpuReadCallback = mpu_read };
 
 	MpuType mpu1 = { .interface = mpu1_interface, .address = MPU6050_ADDRESS_2,
-			.SMPRT_DIV = 0x0, .GYRO_CONFIG = 0x00, .gyroFullScaleRange =
-			MPU_ACCEL_2G_FSR };
+			.samplerateDiv = 0x0, .gyroFullScaleRange = MPU_ACCEL_2G_FSR };
 	/* USER CODE END Init */
 
 	/* Configure the system clock */
@@ -279,7 +279,8 @@ static void MX_GPIO_Init(void) {
 }
 
 /* USER CODE BEGIN 4 */
-MpuStatus mpu_write(uint16_t deviceAddress, uint8_t regAddress, uint8_t *value) {
+MpuStatus mpu_write(uint16_t deviceAddress, uint8_t regAddress,
+		const uint8_t *value) {
 	HAL_StatusTypeDef status = HAL_OK;
 	status = HAL_I2C_Mem_Write(&hi2c1, deviceAddress, regAddress, 1, value, 1,
 			1000);

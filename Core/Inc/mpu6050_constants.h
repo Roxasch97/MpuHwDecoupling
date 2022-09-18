@@ -10,6 +10,7 @@
 
 typedef enum {
 	mpuGenericError = -128,
+	mpuNullptrError = -5,
 	mpuConvertError = -4,
 	mpuAbsentError = -3,
 	mpuReadError = -2,

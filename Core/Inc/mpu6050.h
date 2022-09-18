@@ -17,6 +17,7 @@ typedef struct {
 	mpu_interface interface;
 	uint8_t address;
 	MpuStatus status;
+	uint8_t samplerateDiv;
 	uint8_t accelFullScaleRange;
 	uint16_t accelConvFactor;
 	uint8_t gyroFullScaleRange;

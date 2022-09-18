@@ -11,7 +11,7 @@
 #define UNUSED(x) (void)(x)
 
 MpuStatus MpuWrite(const MpuType *mpu, uint8_t regAddress, uint8_t value) {
-	if(mpu->interface.MpuWriteCallback == NULL){
+	if (mpu->interface.MpuWriteCallback == 0) {
 		return mpuNullptrError;
 	}
 	return mpu->interface.MpuWriteCallback(mpu->address, regAddress, &value);
@@ -19,7 +19,7 @@ MpuStatus MpuWrite(const MpuType *mpu, uint8_t regAddress, uint8_t value) {
 
 MpuStatus MpuRead(const MpuType *mpu, uint8_t regAddress, uint16_t size,
 		uint8_t *destination) {
-	if(mpu->interface.MpuReadCallback == NULL){
+	if (mpu->interface.MpuReadCallback == 0) {
 		return mpuNullptrError;
 	}
 	return mpu->interface.MpuReadCallback(mpu->address, regAddress, destination,
@@ -178,7 +178,7 @@ MpuStatus MpuSetGyroFSR(MpuType *mpu) {
 }
 
 MpuStatus MpuSetSamplerateDivider(const MpuType *mpu) {
-	return MpuMemoryWrite(mpu, MPU6050_REG_SMPLRT_DIV, mpu->SMPRT_DIV);
+	return MpuMemoryWrite(mpu, MPU6050_REG_SMPLRT_DIV, mpu->samplerateDiv);
 }
 
 __attribute__((weak)) void MpuHandleErrors(MpuStatus status) {
