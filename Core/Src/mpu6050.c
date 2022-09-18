@@ -16,8 +16,8 @@ MpuStatus MpuWrite(const MpuType *mpu, uint8_t regAddress, uint8_t value) {
 
 MpuStatus MpuRead(const MpuType *mpu, uint8_t regAddress, uint16_t size,
 		uint8_t *destination) {
-	return mpu->interface.MpuReadCallback(mpu->address, regAddress,
-			destination, size);
+	return mpu->interface.MpuReadCallback(mpu->address, regAddress, destination,
+			size);
 }
 
 uint8_t MpuWhoAmI(const MpuType *mpu) {
@@ -35,8 +35,8 @@ MpuStatus MpuMemoryWrite(const MpuType *mpu, uint8_t regAddress, uint8_t data) {
 	}
 }
 
-MpuStatus MpuMemoryRead(const MpuType *mpu, const uint8_t regAddress, uint16_t size,
-		uint8_t *destination) {
+MpuStatus MpuMemoryRead(const MpuType *mpu, const uint8_t regAddress,
+		uint16_t size, uint8_t *destination) {
 
 	if (MpuWhoAmI(mpu) == WHO_AM_I) {
 		return MpuRead(mpu, regAddress, size, destination);
@@ -70,8 +70,7 @@ MpuStatus MpuInitialize(MpuType *mpu) {
 
 int16_t MpuReadAccelRaw(const MpuType *mpu, uint8_t regAddress) {
 	uint8_t data[2] = { 0 };
-	if(MpuMemoryRead(mpu, regAddress, 2, data) != mpuOk)
-	{
+	if (MpuMemoryRead(mpu, regAddress, 2, data) != mpuOk) {
 		return 0;
 	}
 	return (int16_t) (data[0] << 8 | data[1]);

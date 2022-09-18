@@ -91,7 +91,7 @@ int main(void) {
 
 	MpuType mpu1 = { .interface = mpu1_interface, .address = MPU6050_ADDRESS_2,
 			.SMPRT_DIV = 0x0, .GYRO_CONFIG = 0x00, .gyroFullScaleRange =
-					MPU_ACCEL_2G_FSR };
+			MPU_ACCEL_2G_FSR };
 	/* USER CODE END Init */
 
 	/* Configure the system clock */

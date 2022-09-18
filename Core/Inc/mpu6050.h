@@ -22,11 +22,6 @@ typedef struct {
 	uint8_t gyroFullScaleRange;
 	float gyroConvFactor;
 	uint8_t samplerateDivider;
-
-	/*Basic registers values*/
-	uint8_t PWR_MGMT_1;
-	uint8_t SMPRT_DIV;
-	uint8_t GYRO_CONFIG;
 } MpuType;
 
 MpuStatus MpuReset(const MpuType *mpu);
