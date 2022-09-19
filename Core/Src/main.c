@@ -281,9 +281,14 @@ static void MX_GPIO_Init(void) {
 /* USER CODE BEGIN 4 */
 MpuStatus mpu_write(uint16_t deviceAddress, uint8_t regAddress,
 		const uint8_t *value) {
-	HAL_StatusTypeDef status = HAL_OK;
+	HAL_StatusTypeDef status = HAL_ERROR;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdiscarded-qualifiers"
 	status = HAL_I2C_Mem_Write(&hi2c1, deviceAddress, regAddress, 1, value, 1,
 			1000);
+#pragma GCC diagnostic pop
+
 	if (status == HAL_OK) {
 		return mpuOk;
 	} else {
@@ -293,7 +298,7 @@ MpuStatus mpu_write(uint16_t deviceAddress, uint8_t regAddress,
 
 MpuStatus mpu_read(uint16_t deviceAddress, uint8_t regAddress,
 		uint8_t *destination, uint16_t size) {
-	HAL_StatusTypeDef status = HAL_OK;
+	HAL_StatusTypeDef status = HAL_ERROR;
 	status = HAL_I2C_Mem_Read(&hi2c1, deviceAddress, regAddress, 1, destination,
 			size, 1000);
 	if (status == HAL_OK) {
