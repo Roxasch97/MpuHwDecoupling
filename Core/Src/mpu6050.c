@@ -10,14 +10,19 @@
 #define CheckStatus() if(status != mpuOk){return status;}
 #define UNUSED(x) (void)(x)
 
-MpuStatus MpuWrite(const MpuType *mpu, uint8_t regAddress, uint8_t value) {
+/*
+ *
+ * Generic R/W functions
+ *
+ */
+static MpuStatus MpuWrite(const MpuType *mpu, uint8_t regAddress, uint8_t value) {
 	if (mpu->interface.MpuWriteCallback == 0) {
 		return mpuNullptrError;
 	}
 	return mpu->interface.MpuWriteCallback(mpu->address, regAddress, &value);
 }
 
-MpuStatus MpuRead(const MpuType *mpu, uint8_t regAddress, uint16_t size,
+static MpuStatus MpuRead(const MpuType *mpu, uint8_t regAddress, uint16_t size,
 		uint8_t *destination) {
 	if (mpu->interface.MpuReadCallback == 0) {
 		return mpuNullptrError;
@@ -26,13 +31,19 @@ MpuStatus MpuRead(const MpuType *mpu, uint8_t regAddress, uint16_t size,
 			size);
 }
 
+/*
+ *
+ * Memory R/W functions with device identity checking
+ *
+ */
 uint8_t MpuWhoAmI(const MpuType *mpu) {
 	uint8_t WhoAmIVal = 0;
 	MpuRead(mpu, MPU6050_REG_WHO_AM_I, 1, &WhoAmIVal);
 	return WhoAmIVal;
 }
 
-MpuStatus MpuMemoryWrite(const MpuType *mpu, uint8_t regAddress, uint8_t data) {
+static MpuStatus MpuMemoryWrite(const MpuType *mpu, uint8_t regAddress,
+		uint8_t data) {
 
 	if (MpuWhoAmI(mpu) == WHO_AM_I) {
 		return MpuWrite(mpu, regAddress, data);
@@ -41,7 +52,7 @@ MpuStatus MpuMemoryWrite(const MpuType *mpu, uint8_t regAddress, uint8_t data) {
 	}
 }
 
-MpuStatus MpuMemoryRead(const MpuType *mpu, const uint8_t regAddress,
+static MpuStatus MpuMemoryRead(const MpuType *mpu, const uint8_t regAddress,
 		uint16_t size, uint8_t *destination) {
 
 	if (MpuWhoAmI(mpu) == WHO_AM_I) {
@@ -51,6 +62,12 @@ MpuStatus MpuMemoryRead(const MpuType *mpu, const uint8_t regAddress,
 	}
 
 }
+
+/*
+ *
+ * Initialization and general purpose functions
+ *
+ */
 
 MpuStatus MpuReset(const MpuType *mpu) {
 	return MpuMemoryWrite(mpu, MPU6050_REG_PWR_MGMT_1, RESET_VALUE);
@@ -72,34 +89,6 @@ MpuStatus MpuInitialize(MpuType *mpu) {
 	} else {
 		return mpuAbsentError;
 	}
-}
-
-int16_t MpuReadAccelRaw(const MpuType *mpu, uint8_t regAddress) {
-	uint8_t data[2] = { 0 };
-	if (MpuMemoryRead(mpu, regAddress, 2, data) != mpuOk) {
-		return 0;
-	}
-	return (int16_t) (data[0] << 8 | data[1]);
-}
-
-int16_t MpuReadAccelXRaw(const MpuType *mpu) {
-	return MpuReadAccelRaw(mpu, MPU6050_REG_ACCEL_XOUT_H);
-}
-
-int16_t MpuReadAccelYRaw(const MpuType *mpu) {
-	return MpuReadAccelRaw(mpu, MPU6050_REG_ACCEL_YOUT_H);
-}
-
-int16_t MpuReadAccelZRaw(const MpuType *mpu) {
-	return MpuReadAccelRaw(mpu, MPU6050_REG_ACCEL_ZOUT_H);
-}
-
-float MpuConvertAccel(const MpuType *mpu, int16_t rawAccel) {
-
-	if (mpu->accelConvFactor == 0) {
-		return 0;
-	}
-	return (float) rawAccel / (float) mpu->accelConvFactor;
 }
 
 MpuStatus MpuSetAccelFSR(MpuType *mpu) {
@@ -183,5 +172,56 @@ MpuStatus MpuSetSamplerateDivider(const MpuType *mpu) {
 
 __attribute__((weak)) void MpuHandleErrors(MpuStatus status) {
 	UNUSED(status);
+}
+
+/*
+ * Measurement-related functions
+ */
+static int16_t MpuReadRaw(const MpuType *mpu, uint8_t regAddress) {
+	uint8_t data[2] = { 0 };
+	if (MpuMemoryRead(mpu, regAddress, 2, data) != mpuOk) {
+		return 0;
+	}
+	return (int16_t) (data[0] << 8 | data[1]);
+}
+
+int16_t MpuReadAccelXRaw(const MpuType *mpu) {
+	return MpuReadRaw(mpu, MPU6050_REG_ACCEL_XOUT_H);
+}
+
+int16_t MpuReadAccelYRaw(const MpuType *mpu) {
+	return MpuReadRaw(mpu, MPU6050_REG_ACCEL_YOUT_H);
+}
+
+int16_t MpuReadAccelZRaw(const MpuType *mpu) {
+	return MpuReadRaw(mpu, MPU6050_REG_ACCEL_ZOUT_H);
+}
+
+int16_t MpuReadGyroXRaw(const MpuType *mpu) {
+	return MpuReadRaw(mpu, MPU6050_REG_GYRO_XOUT_H);
+}
+
+int16_t MpuReadGyroYRaw(const MpuType *mpu) {
+	return MpuReadRaw(mpu, MPU6050_REG_GYRO_YOUT_H);
+}
+
+int16_t MpuReadGyroZRaw(const MpuType *mpu) {
+	return MpuReadRaw(mpu, MPU6050_REG_GYRO_ZOUT_H);
+}
+
+float MpuConvertAccel(const MpuType *mpu, int16_t rawAccel) {
+
+	if (mpu->accelConvFactor == 0) {
+		return 0;
+	}
+	return (float) rawAccel / (float) mpu->accelConvFactor;
+}
+
+float MpuConvertGyro(const MpuType *mpu, int16_t rawGyro) {
+
+	if (mpu->gyroConvFactor == 0) {
+		return 0;
+	}
+	return (float) rawGyro / mpu->gyroConvFactor;
 }
 
